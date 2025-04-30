@@ -31,6 +31,17 @@ const createUser = async(req, res) =>{
     res.send('Create User ' + user);
 }
 
+const deleteUser = async (req, res) => {
+    const id = req.params.id;
+    const userDeleted = await User.findByIdAndDelete(id);
+
+    if (!userDeleted){
+        return res.status(404).json({msg:"User not found"});
+    }
+
+    res.status(200).json({msg:"User deleted"});
+}
+
 const auth = async(req, res) => {
     const {email, password} = req.body;
     const user = await User.findOne({email: email});
@@ -55,4 +66,4 @@ const auth = async(req, res) => {
 
 }
 
-export {getAllUsers, getUserById, createUser, auth};
+export {getAllUsers, getUserById, createUser, deleteUser, auth};
