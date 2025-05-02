@@ -1,10 +1,11 @@
 import express from 'express';
-import { getAllCategories, getCategoryById } from '../controllers/categoryController.js';
+import { getAllCategories, createCategory } from '../controllers/categoryController.js';
+import { validationAdminToken } from '../middlewares/authAdmin.js';
 
 const router = express.Router();
 
 // Rutas para las categorías
 router.get('/', getAllCategories);
-router.get('/:id', getCategoryById);
+router.post('/', validationAdminToken, createCategory);
 
 export default router;

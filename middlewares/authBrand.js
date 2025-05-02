@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 const secret_key = process.env.SECRET_KEY;
 
-const validationToken = (req, res, next) => {
+const validationTokenBrand = (req, res, next) => {
     const auth = req.headers.authorization;
 
     if(!auth){
@@ -18,14 +18,14 @@ const validationToken = (req, res, next) => {
             return res.status(403).json({msg: 'Token Inválido'});
         }
 
-        if (decoded.role !== 'user') {
-            return res.status(403).json({ msg: 'No autorizado: solo usuarios' });
+        if (decoded.role !== 'brand') {
+            return res.status(403).json({ msg: 'No autorizado: solo comercios' });
         }
 
-        req.userId = decoded.id;
+        req.brandId = decoded.id;
         next();
     })
 
 }
 
-export { validationToken }
+export { validationTokenBrand };

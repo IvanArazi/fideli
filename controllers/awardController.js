@@ -1,18 +1,55 @@
 // Importar el modelo
-// import Award from '../models/awardModel.js';
+import Award from '../models/awardModel.js';
 
 const getAllAwards = async (req, res) => {
-    res.send('Get All Awards');
+    const awards = await Award.find();
+    if (awards.length === 0) {
+        return res.status(404).send('No se encontraron premios');
+    }
+    res.send(awards);
 }
 
-const getAwardById = async (req, res) => {
-    const id = req.params.id;
-    res.send('Get Awards By Id ' + id);
+const getAwardsById = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const award = await Award.findById(id);
+        if (!award) {
+            return res.status(404).send('No se encontró el premio');
+        }
+        res.send(award);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error en el servidor');
+    }
+
 }
 
 const getAwardsByBrand = async (req, res) => {
-    const Brand = req.params.brand;
-    res.send('Get Awards By Brand ' + Brand);
+    const brandId = req.params.brand;
+    const award = await Award.find({ brand: brandId });
+
+    if (award.length === 0) {
+        return res.status(404).send('No se encontraron premios para este comercio');
+    }
+    res.send(award);
 }
 
-export { getAllAwards, getAwardById, getAwardsByBrand };
+const createAward = async (req, res) => {
+    const { name, description, requiredPoints } = req.body;
+    const brandId = req.brandId;
+
+    if (!name || !description || !requiredPoints) {
+        return res.status(400).send('Todos los campos son obligatorios');
+    }
+
+    const newAward = new Award({
+        name,
+        brand: brandId,
+        description,
+        requiredPoints
+    });
+    await newAward.save();
+    res.status(201).send(newAward);
+}
+
+export { getAllAwards, getAwardsByBrand, createAward, getAwardsById };

@@ -1,5 +1,6 @@
 // Importar el modelo
 import User from '../models/userModel.js';
+import Counter from '../models/counterModel.js';
 import bcrypt from 'bcrypt';
 import jsonwebtoken from "jsonwebtoken";
 import dotenv from 'dotenv';
@@ -8,38 +9,41 @@ dotenv.config();
 const secret_key = process.env.SECRET_KEY;
 const salt = 10;
 
+// Función para obtener el siguiente número único
+const getNextSequence = async (name) => {
+    const counter = await Counter.findOneAndUpdate(
+        { name },
+        { $inc: { seq: 1 } }, // Incrementar el contador
+        { new: true, upsert: true } // Crear el contador si no existe
+    );
+    return counter.seq;
+};
+
 const getAllUsers = async(req, res) =>{
     const users = await User.find();
     res.send(users);
 }
 
-const getUserById = async(req, res) =>{
-    const id = req.params.id;
-    res.send('Get User By Id ' + id);
-}
-
 const createUser = async(req, res) =>{
-    const user = new User(req.body);
-    if (!user.name || !user.email || !user.password){
-        return res.status(403).json({msg: "Falta parametro"});
+    const {name, lastName, email, password} = req.body;
+    if (!name || !lastName || !email || !password){
+        return res.status(403).json({msg: "Debe completar todos los campos"});
     }
 
-    const passwordHash = await bcrypt.hash(user.password, salt);
-    user.password = passwordHash;
+    const passwordHash = await bcrypt.hash(password, salt);
 
-    await user.save();
-    res.send('Create User ' + user);
-}
+    const uniqueNumber = await getNextSequence('uniqueNumber');
 
-const deleteUser = async (req, res) => {
-    const id = req.params.id;
-    const userDeleted = await User.findByIdAndDelete(id);
+    const newUser = new User({
+        name: name,
+        lastName: lastName,
+        email: email,
+        password: passwordHash,
+        uniqueNumber: uniqueNumber
+    });
 
-    if (!userDeleted){
-        return res.status(404).json({msg:"User not found"});
-    }
-
-    res.status(200).json({msg:"User deleted"});
+    await newUser.save();
+    res.status(201).json(newUser);
 }
 
 const auth = async(req, res) => {
@@ -59,6 +63,7 @@ const auth = async(req, res) => {
     const data = {
         id: user._id,
         email: user.email,
+        role : user.role,
     }
     const jwt = jsonwebtoken.sign(data, secret_key, {expiresIn: '1h'});
 
@@ -66,4 +71,4 @@ const auth = async(req, res) => {
 
 }
 
-export {getAllUsers, getUserById, createUser, deleteUser, auth};
+export {getAllUsers, createUser, auth};

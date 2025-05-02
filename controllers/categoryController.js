@@ -1,13 +1,21 @@
 // Importar el modelo
-// import Category from '../models/categoryModel.js';
+import Category from '../models/categoryModel.js';
 
 const getAllCategories = async (req, res) => {
-    res.send('Get All Categories');
+    const categories = await Category.find();
+    if (!categories) {
+        return res.status(404).json({msg: "No hay categorías"});
+    }
+    res.send(categories);
 }
 
-const getCategoryById = async (req, res) => {
-    const id = req.params.id;
-    res.send('Get Category By Id ' + id);
+const createCategory = async (req, res) => {
+    const category = new Category(req.body);
+    if (!category.name) {
+        return res.status(403).json({msg: "Debe completar todos los campos"});
+    }
+    await category.save();
+    res.send(category);
 }
 
-export { getAllCategories, getCategoryById };
+export { getAllCategories, createCategory };

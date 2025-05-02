@@ -5,6 +5,7 @@ import categoriesRouter from './categoriesRouter.js';
 import awardsRouter from './awardsRouter.js';
 import pointsRouter from './pointsRouter.js';
 import redemptionsRouter from './redemptionsRouter.js';
+import adminRouter from './adminRouter.js';
 
 function routerAPI(app){
     // Definir cada ruta
@@ -14,6 +15,7 @@ function routerAPI(app){
     app.use('/api/awards', awardsRouter);
     app.use('/api/points', pointsRouter);
     app.use('/api/redemptions', redemptionsRouter);
+    app.use('/api/admin', adminRouter);
 }
 
 export default routerAPI;
