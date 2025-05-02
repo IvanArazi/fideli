@@ -3,17 +3,17 @@ import mongoose from 'mongoose';
 const redemptionSchema = new mongoose.Schema({
     userId: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User', 
+        ref: 'user', 
         required: true 
     },
     awardId: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Award', 
+        ref: 'award', 
         required: true 
     },
     brandId: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Brand', 
+        ref: 'brand', 
         required: true 
     },
     status: {

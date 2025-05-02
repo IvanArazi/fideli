@@ -19,7 +19,10 @@ const generateUniqueCode = async () => {
   };
 
 const getAllRedemptions = async (req, res) => {
-    const redemptions = await Redemption.find();
+    const redemptions = await Redemption.find()
+    .populate('userId', 'name')
+    .populate('brandId', 'name')
+    .populate('awardId', 'name');
     if (redemptions.length === 0) {
         return res.status(404).json({ message: 'No se encontraron canjes' });
     }
@@ -27,7 +30,10 @@ const getAllRedemptions = async (req, res) => {
 }
 
 const getAllRedemptionPending = async (req, res) => {
-    const redemptions = await Redemption.find({ status: 'pending' });
+    const redemptions = await Redemption.find({ status: 'pending' })
+    .populate('userId', 'name')
+    .populate('brandId', 'name')
+    .populate('awardId', 'name');
     if (redemptions.length === 0) {
         return res.status(404).json({ message: 'No se encontraron canjes pendientes' });
     }
@@ -35,7 +41,10 @@ const getAllRedemptionPending = async (req, res) => {
 }
 
 const getAllRedemptionUsed = async (req, res) => {
-    const redemptions = await Redemption.find({ status: 'used' });
+    const redemptions = await Redemption.find({ status: 'used' })
+    .populate('userId', 'name')
+    .populate('brandId', 'name')
+    .populate('awardId', 'name');
     if (redemptions.length === 0) {
         return res.status(404).json({ message: 'No se encontraron canjes usados' });
     }
@@ -44,7 +53,10 @@ const getAllRedemptionUsed = async (req, res) => {
 
 const getRedemptionByUser = async (req, res) => {
     const { userId } = req.params;
-    const redemptions = await Redemption.find({ userId });
+    const redemptions = await Redemption.find({ userId })
+    .populate('userId', 'name')
+    .populate('brandId', 'name')
+    .populate('awardId', 'name');
     if (redemptions.length === 0) {
         return res.status(404).json({ message: 'No se encontraron canjes para este usuario' });
     }
@@ -53,7 +65,10 @@ const getRedemptionByUser = async (req, res) => {
 
 const getRedemptionByBrand = async (req, res) => {
     const { brandId } = req.params;
-    const redemptions = await Redemption.find({ brandId });
+    const redemptions = await Redemption.find({ brandId })
+    .populate('userId', 'name')
+    .populate('brandId', 'name')
+    .populate('awardId', 'name');
     if (redemptions.length === 0) {
         return res.status(404).json({ message: 'No se encontraron canjes para esta marca' });
     }
