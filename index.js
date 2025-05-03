@@ -10,6 +10,8 @@ const dburi = process.env.MONGODB_URI;
 
 // middleware
 app.use(express.json());
+// Middleware para servir archivos estáticos
+app.use(express.static('public'));
 
 
 app.get('/', (req, res) => {

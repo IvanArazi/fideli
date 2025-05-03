@@ -2,7 +2,7 @@
 import Award from '../models/awardModel.js';
 
 const getAllAwards = async (req, res) => {
-    const awards = await Award.find();
+    const awards = await Award.find().populate('brand', 'name');
     if (awards.length === 0) {
         return res.status(404).send('No se encontraron premios');
     }
@@ -12,7 +12,7 @@ const getAllAwards = async (req, res) => {
 const getAwardsById = async (req, res) => {
     try {
         const id = req.params.id;
-        const award = await Award.findById(id).populate('brand', 'name');;
+        const award = await Award.findById(id).populate('brand', 'name');
         if (!award) {
             return res.status(404).send('No se encontró el premio');
         }
@@ -25,7 +25,7 @@ const getAwardsById = async (req, res) => {
 
 const getAwardsByBrand = async (req, res) => {
     const brandId = req.params.brand;
-    const award = await Award.find({ brand: brandId });
+    const award = await Award.find({ brand: brandId }).populate('brand', 'name');
 
     if (award.length === 0) {
         return res.status(404).send('No se encontraron premios para este comercio');
